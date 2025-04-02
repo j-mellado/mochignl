@@ -6,11 +6,17 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:33:05 by jmellado          #+#    #+#             */
-/*   Updated: 2025/04/02 12:33:06 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/04/02 12:58:01 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-void get_next_line(int fd)
+char* get_next_line(int fd)
+{
+	static char * line;
 
+	
+
+	return (x)
+}
