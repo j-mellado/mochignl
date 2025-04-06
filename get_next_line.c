@@ -10,29 +10,49 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include <stdlib.h> // para malloc
+#include <stdio.h> // para printf y End Of File
+#include <fcntl.h> // para abrir un archivo txt
 
-char* get_next_line(int fd)
+char *get_next_line(int fd)
 {
-	char buffer[BUFFER_SIZE + 1]; // creo un array de tamaño BUFERSIZE +1 para el /0
-	char line[BUFFER_SIZE + 1]; // creo un array de tamaño BUFERSIZE +1 para el /0 que es el que voy a devolver
-	size_t i;
+	int 	byte;
+	char 	c;
+	char 	*str_buffer;
+	int 	i;
 
-	i = 0; //iterador para recorrer los arrays
-
-	if (fd == -1)  // comprobamos que FD no sea -1 (caso de error)
-		return (NULL);
-
-	while (read(fd,buffer[i],1) > 0 ) // lo que devuelve read no sea ni 0 (final de documento) o -1 (error) mientras se guarda en buffer el contenido
+	i = 0;
+	str_buffer = (char*)malloc(1000000);
+	byte = read(fd, &c, 1);
+	while (byte > 0)
 	{
-		if (buffer[i] == "\n")
-		{
-			buffer[i+1] == "\0";
-			ft_strlcpy(line,buffer,i+1);
-			
-			return (line); 
-		}
+		str_buffer[i] = c;
+		i++;
+		if (c == '\n' || c == EOF)
+			break;
+	}
+	
+
+	return("hello 42");
+}
+
+
+int main(void)
+{	
+	int     fd;
+	char	*str;
+	char	*path;
+	int 	i;
+
+	path = "test.txt";
+	fd = open(path, O_RDONLY);
+	i = 0;
+	while(i < 6) // test de llamadas recurentes a gnl
+	{
+		str = get_next_line(fd);
+		printf("%i", i);
+		printf("%i, %s\n",fd,str);
 		i++;
 	}
-	return (NULL); // controla el 0 y el -1 de read
+	return (0);
 }
