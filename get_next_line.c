@@ -1,68 +1,126 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/02 12:33:05 by jmellado          #+#    #+#             */
-/*   Updated: 2025/04/07 16:56:40 by jmellado         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#include "get_next_line.h"
 
-#include <fcntl.h>  // para abrir un archivo txt
-#include <stdio.h>  // para printf y End Of File
-#include <stdlib.h> // para malloc
-#include <unistd.h> // para read
-#ifndef BUFFER_SIZE
-# define BUFFER_SIZE 42
-#endif
+char	*ft_free_strjoin(char *save, char *tmp)
+{
+	char	*new;
+
+	new = ft_strjoin(save, tmp);
+	free(save);
+	return (new);
+}
+
+char	*the_rest(char *save)
+{
+	int		i;
+	int		n;
+	char	*new_save;
+
+	i = 0;
+	while (save[i] != '\0' && save[i] != '\n')
+		i++;
+	if (save[i] == '\0')
+	{
+		free(save);
+		return (NULL);
+	}
+	new_save = ft_calloc(sizeof(char), (ft_strlen(save) - i + 1));
+	i++;
+	n = 0;
+	while (save[i] != '\0')
+		new_save[n++] = save[i++];
+	free(save);
+	return (new_save);
+}
+
+char	*make_line_from(char *save)
+{
+	int		i;
+	char	*line;
+
+	i = 0;
+	if (save[i] == '\0')
+		return (NULL);
+	while (save[i] != '\0' && save[i] != '\n')
+		i++;
+	line = ft_calloc(sizeof(char), (i + 2));
+	i = 0;
+	while (save[i] != '\0' && save[i] != '\n')
+	{
+		line[i] = save[i];
+		i++;
+	}
+	if (save[i] == '\n')
+		line[i] = '\n';
+	return (line);
+}
+
+char	*read_until_enter(int fd, char *save)
+{
+	int		n_of_chars;
+	char	*tmp;
+
+	if (!save)
+		save = ft_calloc(1, 1);
+	tmp = ft_calloc(sizeof(char), BUFFER_SIZE + 1);
+	n_of_chars = 1;
+	while (n_of_chars > 0)
+	{
+		n_of_chars = read(fd, tmp, BUFFER_SIZE);
+		if (n_of_chars == -1)
+		{
+			free(tmp);
+			free(save);
+			return (NULL);
+		}
+		tmp[n_of_chars] = '\0';
+		save = ft_free_strjoin(save, tmp);
+		if (ft_strchr(save, '\n'))
+			break ;
+	}
+	free(tmp);
+	return (save);
+}
 
 char	*get_next_line(int fd)
 {
-	int byte;         // numero de bytes leidos
-	char c;           // caracter leido
-	char *str_buffer; // linea
-	int i;            // iterador
-	if (BUFFER_SIZE < 1 || fd < 0)
-		return (NULL);
-	i = 0;
-	str_buffer = (char *)malloc(10000);
-	if (!str_buffer)
-		return (NULL);
-	byte = read(fd, &c, 1); // cada byte del txt
-	while (byte > 0)
-	{
-		str_buffer[i] = c;
-		i++;
-		if (c == '\n' || c == EOF)
-			break ;
-		byte = read(fd, &c, 1);
-	}
-	if (i == 0 || byte < 0) // no mas char o ocurre un error
-	{
-		free(str_buffer);
-		return (NULL);
-	}
-	str_buffer[i] = '\0';
-	return (str_buffer);
-}
+	char		*line;
+	static char	*save;
 
-int	main(void)
-{
-	int fd;     // el file descriptor
-	char *str;  // aqui guardo lo que devuelve gnl, osea la linea devuelta
-	char *path; // laruta hasta el file descriptor
-	int i;      // un iterador para el bucle
-	path = "test.txt";
-	fd = open(path, O_RDONLY);
-	i = 0;
-	while (i < 10) // test de llamadas recurentes a gnl
-	{
-		str = get_next_line(fd);
-		printf("%i", i);
-		printf("%i, %s\n", fd, str);
-		i++;
-	}
-	return (0);
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+		return (NULL);
+	save = read_until_enter(fd, save);
+	if (save == NULL)
+		return (NULL);
+	line = make_line_from(save);
+	save = the_rest(save);
+	return (line);
 }
+/*
+int main(void)
+{
+  int    fd;
+  char  *next_line;
+  int  count;
+
+  count = 0;
+  fd = open("example.txt", O_RDONLY);
+  if (fd == -1)
+  {
+    printf("Error opening file");
+    return (1);
+  }
+  while(1)
+  {
+    next_line = get_next_line(fd);
+    if (next_line == NULL)
+      break;
+    count++;
+    printf("[%d]:%s\n", count, next_line); //count is to show you the line numbers
+    next_line = NULL;
+    free(next_line);
+  }
+
+  close(fd);
+  return (0);
+}
+*/
