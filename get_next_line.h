@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 12:33:12 by jmellado          #+#    #+#             */
-/*   Updated: 2025/04/28 09:55:49 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/04/30 19:21:16 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@
 # include <sys/types.h>
 # include <sys/uio.h>
 # include <unistd.h>
-/* # include <fcntl.h>
-# include <stdio.h> */
+/*# include <fcntl.h>
+# include <stdio.h>*/
 
 char	*get_next_line(int fd);
 char	*ft_strjoin(char const *s1, char const *s2);

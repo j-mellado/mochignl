@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 09:08:27 by jmellado          #+#    #+#             */
-/*   Updated: 2025/04/28 09:44:16 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/04/30 20:49:41 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ char	*read_file(int fd, char *res)
 		byte_read = read(fd, buffer, BUFFER_SIZE);
 		if (byte_read == -1)
 		{
+			free(res);
 			free(buffer);
 			return (NULL);
 		}
@@ -87,6 +88,8 @@ char	*read_file(int fd, char *res)
 		res = ft_free(res, buffer);
 		if (ft_strchr(buffer, '\n'))
 			break ;
+		if (byte_read < BUFFER_SIZE)
+			return (free(buffer), res);
 	}
 	free(buffer);
 	return (res);
@@ -97,7 +100,7 @@ char	*get_next_line(int fd)
 	static char	*buffer;
 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	buffer = read_file(fd, buffer);
 	if (!buffer)
@@ -109,29 +112,28 @@ char	*get_next_line(int fd)
 /*
 int	main(void)
 {
-  int    fd;
-  char  *next_line;
-  int  count;
+	int		fd;
+	char	*next_line;
+	int		count;
 
-  count = 0;
-  fd = open("example.txt", O_RDONLY);
-  if (fd == -1)
-  {
-	printf("Error opening file");
-	return (1);
-  }
-  while(1)
-  {
-	next_line = get_next_line(fd);
-	if (next_line == NULL)
-		break ;
-	count++;
-	printf("[%d]:%s\n", count, next_line);
-		//count is to show you the line numbers
-	next_line = NULL;
-	free(next_line);
-  }
-  close(fd);
-  return (0);
+	count = 0;
+	fd = open("example.txt", O_RDONLY);
+	if (fd == -1)
+	{
+		printf("Error opening file");
+		return (1);
+	}
+	while (1)
+	{
+		next_line = get_next_line(fd);
+		if (next_line == NULL)
+			break ;
+		count++;
+		printf("[%d]:%s\n", count, next_line);
+		next_line = NULL;
+		free(next_line);
+	}
+	close(fd);
+	return (0);
 }
 */
